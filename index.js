@@ -6,6 +6,9 @@ const app = express();
 // Use the route files as middleware
 app.use('/', require('./routes'));
 
+// setting up template view engine
+app.set('view engine', 'ejs');
+app.set('views', './views')
 
 app.listen(port, function(err){
     if(err){
