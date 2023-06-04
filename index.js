@@ -2,7 +2,8 @@ const express = require('express');
 const port = 8000;
 const app = express();
 
-
+// Require your route files &
+// Use the route files as middleware
 app.use('/', require('./routes'));
 
 
