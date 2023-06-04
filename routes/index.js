@@ -6,7 +6,7 @@ const homeController = require('../controllers/home_controller');
 
 router.get('/', homeController.home);
 
-// for other routers other than index.js i.e. home router
+// for user routers
 router.use('/users', require('./users.js'));
 
 // for any other routes, access using middleware
