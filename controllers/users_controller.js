@@ -36,7 +36,7 @@ module.exports.create = function(req, res){
                 })
                 .then( newUser => {
                     console.log('New User Created : ', newUser);
-                    res.redirect('/users/sign-in');
+                    return res.redirect('/users/sign-in');
                 })
                 .catch(err => {
                     console.log('error in creating the user while signing up : ', err);
@@ -44,10 +44,39 @@ module.exports.create = function(req, res){
 
             }else{
                 console.log('User with same email id already exists!');
-                res.redirect('back');
+                return res.redirect('back');
             }
         })
         .catch(err => {
             console.log('error in finding the user in signing up : ', err);
         })
 }
+
+
+// sign in and create a session for the user
+module.exports.createSession = function(req, res) {
+    /* STEPS TO AUTHENTICATE */
+    // find the user
+    User.findOne({email: req.body.email})
+        .then(user => {
+            // handle if user found    
+            if(user){
+                // handle if password doesn't match
+                if(user.password != req.body.password){
+                    console.log('Wrong Password !');
+                    return res.redirect('back');
+                }
+
+                // handle session creation
+                res.cookie('user_id', user.id);
+                return res.redirect('/users/profile');
+
+            }else{
+                // handle if user not found
+                return res.redirect('back');
+            }
+        })
+        .catch(err => {
+            console.log('error in finding the user in signing in : ', err);
+        });
+};
