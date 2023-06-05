@@ -1,3 +1,5 @@
+const User = require('../models/user');
+
 module.exports.profile = function (req, res) {
     return res.render('user_profile', {
         title: 'User Profile'
@@ -17,3 +19,35 @@ module.exports.signIn = function(req, res){
         title: 'FakeBook | Sign In'
     });
 };
+
+// to get the sign up data for the user
+module.exports.create = function(req, res){
+    if(req.body.password != req.body.confirm_password){
+        return res.redirect('back');
+    }
+
+    User.findOne({email: req.body.email})
+        .then(user => {
+            if(!user){
+                User.create({
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: req.body.password
+                })
+                .then( newUser => {
+                    console.log('New User Created : ', newUser);
+                    res.redirect('/users/sign-in');
+                })
+                .catch(err => {
+                    console.log('error in creating the user while signing up : ', err);
+                });
+
+            }else{
+                console.log('User with same email id already exists!');
+                res.redirect('back');
+            }
+        })
+        .catch(err => {
+            console.log('error in finding the user in signing up : ', err);
+        })
+}

@@ -1,6 +1,13 @@
 const express = require('express');
+const cookieParser = require('cookie-parser');
 const port = 8000;
 const app = express();
+
+const db = require('./config/mongoose');
+
+app.use(express.urlencoded({extended: true}));
+
+app.use(cookieParser());
 
 // Require your route files &
 // Use the route files as middleware
