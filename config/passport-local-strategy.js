@@ -12,21 +12,21 @@ passport.use(new LocalStrategy({
     // here '_username' & '_password' are entered by user
     function(_email, _password, done){
         // find a user and establish its identity
-        User.findOne({email: _email}, function(err, user){
-            if(err){
+        User.findOne({email: _email})
+            .then(user => {
+                // user not found OR password is wrong
+                if(!user || user.password != _password){
+                    console.log('Invalid Username / Password');
+                    return done(null, false);
+                }
+
+                // user found with correct password
+                return done(null, user);
+            })
+            .catch(err => {
                 console.log('error in finding the user => Passport');
                 return done(err);
-            }
-
-            // user not found OR password is wrong
-            if(!user || user.password != _password){
-                console.log('Invalid Username / Password');
-                return done(null, false);
-            }
-
-            // user found with correct password
-            return done(null, user);
-        });
+            });
     }
 ));
 
@@ -38,13 +38,14 @@ passport.serializeUser(function(user, done){
 
 // deserializing the user from key in cookies
 passport.deserializeUser(function(id, done){
-    User.findById(id, function(err, user){
-        if(err){
+    User.findById(id)
+        .then(user => {
+            return done(null, user);
+        })
+        .catch(err => {
             console.log('error in finding the user => Passport');
             return done(err);
-        }
-        return done(null, user);
-    });
+        });
 });
 
 // export

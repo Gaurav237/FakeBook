@@ -36,7 +36,7 @@ module.exports.create = function(req, res){
                 })
                 .then( newUser => {
                     console.log('New User Created : ', newUser);
-                    res.redirect('/users/sign-in');
+                    return res.redirect('/users/sign-in');
                 })
                 .catch(err => {
                     console.log('error in creating the user while signing up : ', err);
@@ -44,10 +44,15 @@ module.exports.create = function(req, res){
 
             }else{
                 console.log('User with same email id already exists!');
-                res.redirect('back');
+                return res.redirect('back');
             }
         })
         .catch(err => {
             console.log('error in finding the user in signing up : ', err);
         })
+}
+
+// sign in and create a session for the user
+module.exports.createSession = function(req, res) {
+    return res.redirect('/');
 }
