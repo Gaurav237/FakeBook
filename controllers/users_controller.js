@@ -8,6 +8,12 @@ module.exports.profile = function (req, res) {
 
 //render the sign up page
 module.exports.signUp = function(req, res){
+    // restricting page access
+    // once signed up, then we cant again go to sign-up OR sign-in page using url 
+    if(req.isAuthenticated()){
+        return res.redirect('/users/profile');
+    }
+
     return res.render('user_sign_up', {
         title: 'FakeBook | Sign Up'
     });
@@ -15,6 +21,12 @@ module.exports.signUp = function(req, res){
 
 //render the sign in page
 module.exports.signIn = function(req, res){
+    // restricting page access 
+    // once signed in, then we cant again go to sign-up OR sign-in page using url 
+    if(req.isAuthenticated()){
+        return res.redirect('/users/profile');
+    }
+
     return res.render('user_sign_in', {
         title: 'FakeBook | Sign In'
     });
