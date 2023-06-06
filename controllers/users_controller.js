@@ -68,3 +68,17 @@ module.exports.create = function(req, res){
 module.exports.createSession = function(req, res) {
     return res.redirect('/');
 }
+
+// sign out action
+module.exports.destroySession = function(req, res, next){
+    // this is password-js function
+    req.logout(err => {
+        if(err){
+            // Handle any error that occurred during the logout process
+            console.log('error in signing out : ', err);
+            return next(err);
+        }
+    });  
+
+    return res.redirect('/');
+}
