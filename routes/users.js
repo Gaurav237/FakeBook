@@ -6,7 +6,8 @@ const passport = require('passport');
 
 const usersController = require('../controllers/users_controller');
 
-router.get('/profile', usersController.profile);
+// chechkAuthentication => will only show profile page if user is signed in 
+router.get('/profile', passport.checkAuthentication, usersController.profile);
 
 router.get('/sign-up', usersController.signUp);
 

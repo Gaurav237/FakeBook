@@ -33,6 +33,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(passport.setAuthenticatedUser);
+
 // Require your route files &
 // Use the route files as middleware
 app.use('/', require('./routes'));
