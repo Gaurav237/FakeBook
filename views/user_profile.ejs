@@ -4,5 +4,18 @@
     FakeBook / Profile Page
 </h1>
 
-<p> <%= profile_user.name %> </p>
-<p> <%= profile_user.email %> </p>
+
+
+<% if (user.id == profile_user.id) { %>
+    <!-- if user matches then show update form  -->
+    <h3>Update Profile Information</h3>
+    <form action="/users/update/<%= profile_user.id %>" method="POST">
+        <input type="text" name="name" value="<%= profile_user.name %>" placeholder="Your New Name" required>
+        <input type="text" name="email" value="<%= profile_user.email %>" placeholder="Your New Email" required>
+        <input type="submit" value="UPDATE">
+    </form>
+<% }else{ %>    
+    <!-- only show profile info -->
+    <p> <%= profile_user.name %> </p>
+    <p> <%= profile_user.email %> </p>
+<% } %>
