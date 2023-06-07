@@ -8,5 +8,8 @@ const passport = require('passport');
 // controller level authentication added for posting.
 router.post('/create', passport.checkAuthentication ,postsController.create);
 
+// delete router
+// params
+router.get('/destroy/:id', passport.checkAuthentication, postsController.destroy);
 
 module.exports = router;

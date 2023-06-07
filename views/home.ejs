@@ -19,6 +19,16 @@
         <ul>
             <% for(post of posts){ %>
                 <li>
+                    <!-- Delete Post Button  -->
+                    <!-- if (user is signed-in) && (user logged-in = who created that post) -->
+                    <% if ((locals.user) && (locals.user.id == post.user.id)) { %> 
+                        <p>
+                            <a href="/posts/destroy/<%= post.id %>">
+                                <i class="fa fa-trash-o"></i>
+                            </a>
+                        </p>
+                    <% } %>
+                    
                     <p><b>Content : </b> <%= post.content %> </p>
                     <p><b>Created By : </b> <%= post.user.name %> </p>
                     <p><b>Date : </b> <%= post.createdAt.toISOString().substr(0,10) %> </p>
