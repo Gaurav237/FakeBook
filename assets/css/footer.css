@@ -1,0 +1,31 @@
+/* Footer */
+footer {
+  background-color: #333;
+  padding: 20px;
+  color: #fff;
+  text-align: center;
+}
+footer div {
+  margin-bottom: 10px;
+}
+footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+footer ul li {
+  margin: 0 10px;
+}
+footer ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 5px;
+  transition: all 0.3s ease;
+}
+footer ul li a:hover {
+  background-color: #fff;
+  color: #333;
+}/*# sourceMappingURL=footer.css.map */
