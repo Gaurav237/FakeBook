@@ -30,3 +30,37 @@ module.exports.create = function (req, res) {
             }
         });
 }
+
+
+// for deleting comments
+module.exports.destroy = function(req, res) {
+    Comment.findById(req.params.id)
+        .then(comment => {
+            if(comment.user == req.user.id){
+                // we need to delete this comment && also from comments array in Post
+
+                let postId = comment.post;
+
+                // delete the post
+                comment.deleteOne()
+                    .then( (result) => {
+                        // delete this comment id from Post comments array
+
+                        // this pulls out the comment id from array matching with comment id
+                        Post.findByIdAndUpdate(postId, {$pull: {comments: req.params.id}})
+                            .then( () => res.redirect('back') )
+                            .catch( err => res.redirect('back') );
+                    })
+                    .catch( (err) => {
+                        console.log('error in deleting the comment : ', err);
+                        return res.redirect('back');
+                    })
+            }else{
+                return res.redirect('back');
+            }
+        })
+        .catch(err => {
+            console.log('cant find the comment : ', err);
+            return res.redirect('back');
+        })
+}

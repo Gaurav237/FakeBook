@@ -52,6 +52,15 @@
                                     <small>
                                         <%= comment.user.name %>
                                     </small>
+                                    <!-- Delete Comment Button  -->
+                                    <!-- if (user is signed-in) && (user logged-in == user who created that comment)-->
+                                    <% if ((locals.user) && (locals.user.id == comment.user.id)) { %> 
+                                        <p>
+                                            <a href="/comments/destroy/<%= comment.id %>">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </p>
+                                    <% } %>
                                 </p>
                             <% } %>
                         </ul>
