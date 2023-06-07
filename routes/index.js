@@ -12,6 +12,9 @@ router.use('/users', require('./users.js'));
 // for posts router
 router.use('/posts', require('./posts'));   // .js not required
 
+// for comments router
+router.use('/comments', require('./comments'));
+
 // for any other routes, access using middleware
 // app.use('/routerName', require('./routerFile'));
 
