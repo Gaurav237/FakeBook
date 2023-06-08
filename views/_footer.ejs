@@ -10,7 +10,9 @@
     <div>
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="/users/profile/<%= user.id %>"> Profile </a></li>
+            <% if (locals.user){ %>
+                <li><a href="/users/profile/<%= locals.user.id %>"> Profile </a></li>
+            <% } %>
         </ul>
     </div>
 </footer>
