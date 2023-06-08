@@ -42,35 +42,33 @@ module.exports.signIn = function(req, res){
 };
 
 // to get the sign up data for the user
-module.exports.create = function(req, res){
+module.exports.create = async function(req, res){
     if(req.body.password != req.body.confirm_password){
+        console.log("Password & Confirm Password did not match !");
         return res.redirect('back');
     }
 
-    User.findOne({email: req.body.email})
-        .then(user => {
-            if(!user){
-                User.create({
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: req.body.password
-                })
-                .then( newUser => {
-                    console.log('New User Created : ', newUser);
-                    return res.redirect('/users/sign-in');
-                })
-                .catch(err => {
-                    console.log('error in creating the user while signing up : ', err);
-                });
+    try {
+        const existingUser = await User.findOne({email: req.body.email});
+        
+        if(!existingUser) {
+            const newUser = await User.create({
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password
+            });
+            console.log('New User Created : ', newUser);
+            return res.redirect('/users/sign-in');
 
-            }else{
-                console.log('User with same email id already exists!');
-                return res.redirect('back');
-            }
-        })
-        .catch(err => {
-            console.log('error in finding the user in signing up : ', err);
-        })
+        }else{
+            console.log('User with same email id already exists!');
+            return res.redirect('back');
+        }
+
+    } catch(err) {
+        console.log('Error : ', err);
+        return;
+    }
 }
 
 // sign in and create a session for the user

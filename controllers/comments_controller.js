@@ -1,66 +1,56 @@
 const Comment = require('../models/comment');
 const Post = require('../models/post');
 
-module.exports.create = function (req, res) {
-    Post.findById(req.body.post_id)
-        .then(post => {
-            // if post present then add the comment on that post
-            if(post){
-                Comment.create({
-                    content: req.body.post_content,
-                    post: req.body.post_id,
-                    user: req.user._id
-                })
-                .then(comment => {
-                    // add this comment to that post
-                    post.comments.push(comment);
-                    post.save();  //  save the changes made to the post object back to the database
-                
-                    return res.redirect('/');
-                })
-                .catch(err => {
-                    console.log('error in creating the comment');
-                    return res.redirect('/');
-                });
-            }
-        })
-        .catch(err => {
-            if(err){
-                console.log('error in finding the post on which comment is done');
-            }
-        });
+module.exports.create = async function (req, res) {
+
+    try {
+        const post = await Post.findById(req.body.post_id);
+        
+        // if post present then add the comment on that post
+        if(post){
+            const comment = await Comment.create({
+                content: req.body.post_content,
+                post: req.body.post_id,
+                user: req.user._id
+            });
+
+            post.comments.push(comment);  // add this comment to that post
+            post.save();  //  save the changes made to the post object back to the database
+            
+            return res.redirect('/');
+        }else{
+            return res.redirect('/');
+        }
+    } catch(err) {
+        console.log('Error : ', err);
+        return;
+    }
 }
 
 
 // for deleting comments
-module.exports.destroy = function(req, res) {
-    Comment.findById(req.params.id)
-        .then(comment => {
-            if(comment.user == req.user.id){
-                // we need to delete this comment && also from comments array in Post
+module.exports.destroy = async function(req, res) {
 
-                let postId = comment.post;
+    try {
+        const comment = await Comment.findById(req.params.id);
 
-                // delete the post
-                comment.deleteOne()
-                    .then( (result) => {
-                        // delete this comment id from Post comments array
+        if(comment.user == req.user.id){
+            // we need to delete this comment && also from comments array in Post
+            let postId = comment.post;
 
-                        // this pulls out the comment id from array matching with comment id
-                        Post.findByIdAndUpdate(postId, {$pull: {comments: req.params.id}})
-                            .then( () => res.redirect('back') )
-                            .catch( err => res.redirect('back') );
-                    })
-                    .catch( (err) => {
-                        console.log('error in deleting the comment : ', err);
-                        return res.redirect('back');
-                    })
-            }else{
-                return res.redirect('back');
-            }
-        })
-        .catch(err => {
-            console.log('cant find the comment : ', err);
+            // delete the comment
+            comment.deleteOne();
+
+            // delete this comment id from Post comments array
+            await Post.findByIdAndUpdate(postId, {$pull: {comments: req.params.id}});
+
             return res.redirect('back');
-        })
+        }else{
+            return res.redirect('back');
+        }
+
+    } catch(err) {
+        console.log('Error : ', err);
+        return;
+    }
 }
