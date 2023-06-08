@@ -16,6 +16,10 @@ const passportLocal = require('./config/passport-local-strategy');
 // setting up mongo store
 const MongoStore = require('connect-mongo')(session);
 
+// setting up flash notification
+const flash = require('connect-flash');
+const customMiddleware = require('./config/middleware');
+
 app.use(express.urlencoded({extended: true}));
 
 app.use(cookieParser());
@@ -57,6 +61,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(passport.setAuthenticatedUser);
+
+// Configure flash middleware
+app.use(flash());
+/* used this customMiddleware.setFlash() to pass the flash message 
+    from req.flash to session cookies., instead of explicitly passing messages to locals everytime.
+    => res.redirect('/', { flash : {'success': 'msg'}}) 
+*/
+app.use(customMiddleware.setFlash);
 
 // Require your route files &
 // Use the route files as middleware
