@@ -1,36 +1,25 @@
 const Post  = require('../models/post');
 const User = require('../models/user');
 
-module.exports.home = function(req, res){
+module.exports.home = async function(req, res){
         
-    Post.find({})
-        .populate('user', 'name')  // only name & _id will be populated
+    try{ 
+        let posts = await Post.find({}) 
+            .populate('user', 'name') 
+            .populate({ path: 'comments', 
+                        populate: { path: 'user' } 
+                    }); 
+        
+        let users = await User.find({}); 
+        
+        return res.render('home', { 
+            title: 'Home', 
+            posts: posts, 
+            all_users: users 
+        }); 
 
-        // NESTED population =>   to populate the comments field of a document.
-        // Along with populating the comments field, the user field of each comment is also populated.
-        .populate({  
-            path: 'comments',
-            populate: {
-                path: 'user'
-            }
-        })
-
-        .then(posts => {
-
-            // fetch all users
-            User.find({})
-                .then(users => {
-                    return res.render('home', {
-                        title: 'Home',
-                        posts: posts,
-                        all_users: users
-                    });
-                })
-                .catch(err => {
-                    console.log('error in fetching Users from db');
-                });
-        })
-        .catch(err => {
-            console.log('error in fetching posts from db');
-        });
+    } catch(err){ 
+        console.log('Error : ', err); 
+        return; 
+    }
 }
