@@ -7,12 +7,12 @@ module.exports.create = async function(req, res){
             content: req.body.content,
             user: req.user._id
         });
-        console.log('Post created successfully : ', post);
+        req.flash('success', 'Post created successfully !');
         return res.redirect('back');
 
     } catch(err) {
-        console.log('Error : ', err);
-        return;
+        req.flash('error', err);
+        return res.redirect('back');
     }
 }
 
@@ -27,19 +27,19 @@ module.exports.destroy = async function(req, res) {
         if(post.user == req.user.id){   
             
             post.deleteOne();
-            console.log('post deleted');
             
             // delete all comments of that post
             let comments = await Comment.deleteMany({post: req.params.id});
-            console.log(`${comments.deletedCount} comments deleted.`);
 
+            req.flash('success', `Post and its ${comments.deletedCount} associated comments deleted!`)
             return res.redirect('back');
         }else{
+            req.flash('error', `You are not allowed to delete this post!`)
             return res.redirect('back');
         }
 
     } catch(err) {
-        console.log('Error : ', err);
+        req.flash('error', err);
         return;
     }
 }

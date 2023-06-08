@@ -10,7 +10,7 @@ module.exports.profile = function (req, res) {
             });
         })
         .catch(err => {
-            console.log('error in finding profile page of user');
+            req.flash('error', err);
             return res.redirect('back');
         })
 };
@@ -44,7 +44,7 @@ module.exports.signIn = function(req, res){
 // to get the sign up data for the user
 module.exports.create = async function(req, res){
     if(req.body.password != req.body.confirm_password){
-        console.log("Password & Confirm Password did not match !");
+        req.flash('error', 'Password & Confirm Password did not match !');
         return res.redirect('back');
     }
 
@@ -57,16 +57,16 @@ module.exports.create = async function(req, res){
                 email: req.body.email,
                 password: req.body.password
             });
-            console.log('New User Created : ', newUser);
+            req.flash('success' ,'Congratulations! You have successfully signed up. Welcome to our community! ');
             return res.redirect('/users/sign-in');
 
         }else{
-            console.log('User with same email id already exists!');
+            req.flash('error', 'User with same email id already exists!');
             return res.redirect('back');
         }
 
     } catch(err) {
-        console.log('Error : ', err);
+        req.flash('error', err);
         return;
     }
 }
@@ -80,16 +80,18 @@ module.exports.createSession = function(req, res) {
 
 // sign out action
 module.exports.destroySession = function(req, res, next){
-    // this is password-js function
+
     req.logout(err => {
         if(err){
-            // Handle any error that occurred during the logout process
-            console.log('error in signing out : ', err);
+            req.flash('error', err);
             return next(err);
         }
     });  
 
-    return res.redirect('/');
+    req.session.save(() => {
+        req.flash('success', 'You have been successfully logged out. Come back soon!');
+        return res.redirect('/');
+    });
 }
 
 // update action
@@ -103,11 +105,11 @@ module.exports.update = function(req, res){
             name: req.body.name,
         })
         .then( () => {
-            console.log('User information updated');
+            req.flash('success', 'User information updated!');
             return res.redirect('back');
         })
         .catch( (err) => {
-            console.log('Error in updating user information');
+            req.flash('error', err);
             return res.redirect('back');
         });
 
