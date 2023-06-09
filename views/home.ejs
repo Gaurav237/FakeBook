@@ -18,55 +18,7 @@
     <div id="posts-list-container">
         <ul id="posts-list">
             <% for(post of posts){ %>
-                <li id="post-<%= post._id %>">
-                    <!-- Delete Post Button  -->
-                    <!-- if (user is signed-in) && (user logged-in = who created that post) -->
-                    <% if ((locals.user) && (locals.user.id == post.user.id)) { %> 
-                        <p>
-                            <a class="delete-post-button" href="/posts/destroy/<%= post.id %>">
-                                <i class="fa fa-trash-o"></i>
-                            </a>
-                        </p>
-                    <% } %>
-                    
-                    <p><b>Content : </b> <%= post.content %> </p>
-                    <p><b>Created By : </b> <%= post.user.name %> </p>
-                    <p><b>Date : </b> <%= post.createdAt.toISOString().substr(0,10) %> </p>
-                    <p><b>Time : </b> <%= post.updatedAt.toISOString().substr(11,5) %> </p>
-                </li>
-                <div class="post-comments">
-                    <% if (locals.user) { %>
-                        <form action="/comments/create" method="POST">
-                            <input type="text" name="post_content" placeholder="Type here to add comment ..." required>
-                            <input type="hidden" name="post_id" value="<%= post._id %>">
-                            <input type="submit" value="comment">
-                        </form>
-                    <% } %>
-
-                    <div class="post-comments-list">
-                        <ul id="post-comments-<%= post._id %>">
-                            <% for (comment of post.comments) { %>  <!-- from comments array in posts -->
-                                 <p>
-                                    <%= comment.content %>
-                                    <br>
-                                    <small>
-                                        <%= comment.user.name %>
-                                    </small>
-                                    <!-- Delete Comment Button  -->
-                                    <!-- if (user is signed-in) && (user logged-in == user who created that comment)-->
-                                    <% if ((locals.user) && (locals.user.id == comment.user.id)) { %> 
-                                        <p>
-                                            <a href="/comments/destroy/<%= comment.id %>">
-                                                <i class="fa fa-trash-o"></i>
-                                            </a>
-                                        </p>
-                                    <% } %>
-                                </p>
-                            <% } %>
-                        </ul>
-                    </div>
-                </div>
-                <br>
+                <%- include('_post'); %>
             <% } %>
         </ul>
         

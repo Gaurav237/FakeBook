@@ -6,7 +6,7 @@
 
         newPostForm.submit(function(e) {
             e.preventDefault();
-            var form = $(this)
+
             $.ajax({
                 url: '/posts/create',
                 type: 'post',
@@ -16,8 +16,17 @@
                     let newPost = newPostDOM(data.data.post);
                     $('#posts-list').prepend(newPost);
 
-                    // Clear the form
-                    // newPostForm[0].reset();
+                    // add delete using AJAX
+                    // looks for elements with the class "delete-post-button" within the DOM structure of the newPost element.
+                    deletePost($(' .delete-post-button', newPost));
+
+                    new Noty({
+                        theme: 'relax',
+                        text: 'Post Published !',
+                        type: 'success',
+                        layout: 'topRight',
+                        timeout: 1500
+                    }).show();
                 }, 
                 error : function (xhr, status, err) {
                     console.log(err);
@@ -32,18 +41,18 @@
         return $(`
             <li id="post-${post._id}">
                     <p>
-                        <a class="delete-post-button" href="/posts/destroy/${post.id}">
+                        <a class="delete-post-button" href="/posts/destroy/${post._id}">
                             <i class="fa fa-trash-o"></i>
                         </a>
                     </p>
 
                 <p><b>Content : </b> ${post.content} </p>
                 <p><b>Created By : </b> ${post.user.name} </p>
-                <p><b>Date : </b> ${post.createdAt.toISOString().substr(0,10)} </p>
-                <p><b>Time : </b> ${post.updatedAt.toISOString().substr(11,5)} </p>
+                <p><b>Date : </b> ${new Date(post.createdAt).toISOString().substr(0,10)} </p>
+                <p><b>Time : </b> ${new Date(post.updatedAt).toISOString().substr(11,5)} </p>
             </li>
             <div class="post-comments">
-                    <form action="/comments/create" method="POST">
+                    <form id="post-${post._id}-comments-form" action="/comments/create" method="POST">
                         <input type="text" name="post_content" placeholder="Type here to add comment ..." required>
                         <input type="hidden" name="post_id" value="${post._id}">
                         <input type="submit" value="comment">
@@ -56,6 +65,35 @@
             </div>
         `);
     }
+
+    // method to delete a post from DOM
+    let deletePost = function (deleteLink) {  // here passed on the <a> tag (class="delete-post-button") as deleteLink.
+        $(deleteLink).click(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                type: 'get',
+                url: $(deleteLink).prop('href'),
+                success: function(data) {
+                    //The data object is received as a response from the server,
+                    // and the post_id property is accessed from it.
+                    $(`#post-${data.data.post_id}`).remove();
+                    
+                    new Noty({
+                        theme: 'relax',
+                        text: 'Post Deleted',
+                        type: 'success',
+                        layout: 'topRight',
+                        timeout: 1500
+                    }).show();
+                },
+                error: function(err){
+                    console.log(err.responseText);
+                }
+            })
+        })
+    }
+
 
     createPost();
 }
