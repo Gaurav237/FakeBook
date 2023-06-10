@@ -95,23 +95,35 @@ module.exports.destroySession = function(req, res, next){
 }
 
 // update action
-module.exports.update = function(req, res){
+module.exports.update = async function(req, res){
     const userId = req.params.id;
     
     if(req.user.id == userId){
 
-        User.findByIdAndUpdate(userId, {
-            email: req.body.email,
-            name: req.body.name,
-        })
-        .then( () => {
-            req.flash('success', 'User information updated!');
+        try{
+            let user = await User.findById(userId);
+            
+            User.uploadedAvatar(req, res, function(err) {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+                // console.log(req.file);
+                user.name = req.body.name;
+                user.email = req.body.email;
+
+                if(req.file){  // photo upload is not set required 
+                    // this saves the path of uploaded file into avatar field in user
+                    user.avatar = User.avatarPath + '/' + req.file.filename;
+                }
+
+                user.save();
+                return res.redirect('back');
+            });
+        }catch(err){
+            req.flash('error ', err);
             return res.redirect('back');
-        })
-        .catch( (err) => {
-            req.flash('error', err);
-            return res.redirect('back');
-        });
+        }
 
     }else{
         return res.status(401).send('Unauthorized');
