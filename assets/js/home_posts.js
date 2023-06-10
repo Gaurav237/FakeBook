@@ -20,12 +20,15 @@
                     // looks for elements with the class "delete-post-button" within the DOM structure of the newPost element.
                     deletePost($(' .delete-post-button', newPost));
 
+                    // calling this class to create Comments
+                    new PostComments(data.data.post._id);
+
                     new Noty({
-                        theme: 'relax',
+                        theme: 'metroui',
                         text: 'Post Published !',
                         type: 'success',
                         layout: 'topRight',
-                        timeout: 1500
+                        timeout: 1200
                     }).show();
                 }, 
                 error : function (xhr, status, err) {
@@ -80,11 +83,11 @@
                     $(`#post-${data.data.post_id}`).remove();
                     
                     new Noty({
-                        theme: 'relax',
-                        text: 'Post Deleted',
+                        theme: 'metroui',
+                        text: 'Post Deleted !',
                         type: 'success',
                         layout: 'topRight',
-                        timeout: 1500
+                        timeout: 1200
                     }).show();
                 },
                 error: function(err){
@@ -94,6 +97,19 @@
         })
     }
 
+    // add ajax delete method on all previously existing posts (when window loads for first time)
+    let convertPostsToAjax = function() {
+        $(`#posts-list>li`).each(function() {
+            let self = $(this);
+            let deleteButton = $(' .delete-post-button', self);
+            deletePost(deleteButton);
 
+            // get the posts id
+            let postId = self.prop('id').split('-')[1];
+            new PostComments(postId);
+        });
+    }
+    convertPostsToAjax();
+    
     createPost();
 }
