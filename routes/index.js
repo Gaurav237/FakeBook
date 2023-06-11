@@ -15,6 +15,9 @@ router.use('/posts', require('./posts'));   // .js not required
 // for comments router
 router.use('/comments', require('./comments'));
 
+// api route
+router.use('/api', require('./api'));
+
 // for any other routes, access using middleware
 // app.use('/routerName', require('./routerFile'));
 
